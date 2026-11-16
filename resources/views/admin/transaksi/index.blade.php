@@ -44,11 +44,10 @@
                         <a class="nav-link active" href="{{ route('admin.transaksi.index') }}">Transaksi</a>
                     </li>
                 </ul>
-                <ul class="navbar-nav ms-auto me-2 mt-lg-0">
-                    <li class="nav-item">
-                        <a class="btn btn-outline-light" href="#">Logout</a>
-                    </li>
-                </ul>
+                 <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-outline-light">Logout</button>
+                </form>
             </div>
         </div>
     </nav>
