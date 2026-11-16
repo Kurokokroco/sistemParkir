@@ -1,7 +1,8 @@
 <?php
 
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AreaParkirController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\KendaraanController;
 use App\Http\Controllers\TransaksiParkirController;
 use App\Http\Controllers\UserController;
@@ -18,7 +19,7 @@ Route::post('/logout', [AuthController::class, 'logout'])
     ->name('logout');
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', fn () => view('admin.dashboard'))->name('dashboard');
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::get('/transaksi', [TransaksiParkirController::class, 'index'])->name('transaksi.index');
 
     Route::prefix('/area-parkir')->name('area_parkir.')->group(function () {
