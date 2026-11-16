@@ -6,6 +6,7 @@ use App\Models\AreaParkir;
 use App\Models\TransaksiParkir;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\View\View;
+use Laravel\Mcp\Request;
 
 class AdminDashboardController extends Controller
 {
