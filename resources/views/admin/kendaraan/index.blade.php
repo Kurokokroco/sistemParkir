@@ -55,29 +55,30 @@
     </nav>
 
     <div class="container py-4">
+        <h1>Data Kendaraan</h1>
+        <p class="text-muted">Kelola data kendaraan di sini</p>
+        @if (session('success'))
+            <div class="alert alert-success alert-dismissible fade show">
+                {{ session('success') }}
+
+                <button class="btn-close" data-bs-dismiss="alert" type="button"></button>
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div class="alert alert-danger alert-dismissible fade show">
+                {{ session('error') }}
+
+                <button class="btn-close" data-bs-dismiss="alert" type="button"></button>
+            </div>
+        @endif
+        <a href="{{ route('admin.kendaraan.create') }}" class="btn btn-primary btn-sm mb-3">Tambah Kendaraan</a>
+
         <div class="card border-0 shadow-sm">
-            <h3>Data Kendaraan</h3>
-            <p class="text-muted">Kelola data kendaraan di sini</p>
 
-            @if (session('success'))
-                <div class="alert alert-success alert-dismissible fade show">
-                    {{ session('success') }}
-
-                    <button class="btn-close" data-bs-dismiss="alert" type="button"></button>
-                </div>
-            @endif
-
-            @if (session('error'))
-                <div class="alert alert-danger alert-dismissible fade show">
-                    {{ session('error') }}
-
-                    <button class="btn-close" data-bs-dismiss="alert" type="button"></button>
-                </div>
-            @endif
 
             
             <div class="card-body">
-                <a href="{{ route('admin.kendaraan.create') }}" class="btn btn-primary btn-sm mb-2">Tambah Kendaraan</a>
                 <div class="table-responsive">
                     <table class="table table-striped table-bordered align-middle">
                         <thead class="table-primary">
