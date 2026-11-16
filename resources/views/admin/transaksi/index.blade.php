@@ -7,20 +7,49 @@
     <link rel="stylesheet" href="{{ asset('resources/css/bootstrap.min.css') }}">
 </head>
 <body class="bg-light">
-    <nav class="navbar navbar-expand-sm navbar-dark bg-primary">
+      <nav
+        class="navbar navbar-expand-sm navbar-dark bg-primary"
+    >
         <div class="container">
             <a class="navbar-brand" href="{{ route('admin.dashboard') }}">Sistem Parkir</a>
-            <div class="navbar-nav me-auto">
-                <a class="nav-link" href="{{ route('admin.dashboard') }}">Dashboard</a>
-                <a class="nav-link" href="{{ route('admin.pengguna.index') }}">Pengguna</a>
-                <a class="nav-link" href="{{ route('admin.kendaraan.index') }}">Kendaraan</a>
-                <a class="nav-link" href="{{ route('admin.area_parkir.index') }}">Area Parkir</a>
-                <a class="nav-link active" href="{{ route('admin.transaksi.index') }}">Transaksi</a>
+            <button
+                class="navbar-toggler d-lg-none"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapsibleNavId"
+                aria-controls="collapsibleNavId"
+                aria-expanded="false"
+                aria-label="Toggle navigation"
+            >
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="collapsibleNavId">
+                <ul class="navbar-nav me-auto mt-2 mt-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('admin.dashboard') }}" aria-current="page"
+                            >Dashboard
+                            <span class="visually-hidden">(current)</span></a
+                        >
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('admin.pengguna.index') }}">Pengguna</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('admin.kendaraan.index') }}">Kendaraan</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('admin.area_parkir.index') }}">Area Parkir</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ route('admin.transaksi.index') }}">Transaksi</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto me-2 mt-lg-0">
+                    <li class="nav-item">
+                        <a class="btn btn-outline-light" href="#">Logout</a>
+                    </li>
+                </ul>
             </div>
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="btn btn-outline-light">Logout</button>
-            </form>
         </div>
     </nav>
 
@@ -73,5 +102,7 @@
             </div>
         </section>
     </main>
+
+     <script src="{{ asset('resources/js/bootstrap.min.js') }}"></script>
 </body>
 </html>
