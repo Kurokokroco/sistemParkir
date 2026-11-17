@@ -78,6 +78,10 @@
 
             
             <div class="card-body">
+                <div class="mb-3">
+                    <label for="vehicle-search" class="form-label">Cari kendaraan</label>
+                    <input type="search" id="vehicle-search" class="form-control" placeholder="Ketik plat nomor, jenis, atau merk...">
+                </div>
                 <div class="table-responsive">
                     <table class="table table-striped table-bordered align-middle">
                         <thead class="table-primary">
@@ -91,7 +95,7 @@
                         </thead>
                         <tbody>
                             @forelse ($kendaraan as $item)
-                                <tr>
+                                <tr data-search="{{ $item->plat_nomor }} {{ $item->jenis_kendaraan }} {{ $item->merk }}">
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $item->plat_nomor }}</td>
                                     <td>{{ ucfirst($item->jenis_kendaraan) }}</td>
@@ -111,8 +115,10 @@
                                     Belum ada data
                                 </td>
                             </tr>
-                                
                             @endforelse
+                            <tr id="vehicle-search-empty" hidden>
+                                <td class="text-center" colspan="5">Kendaraan tidak ditemukan.</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -123,5 +129,27 @@
     
 
      <script src="{{ asset('resources/js/bootstrap.min.js') }}"></script>
+    <script>
+        const vehicleSearch = document.getElementById('vehicle-search');
+        const vehicleRows = Array.from(document.querySelectorAll('tbody tr[data-search]'));
+        const vehicleSearchEmpty = document.getElementById('vehicle-search-empty');
+
+        vehicleSearch.addEventListener('input', () => {
+            const query = vehicleSearch.value.trim().toLocaleLowerCase('id');
+            let visibleCount = 0;
+
+            vehicleRows.forEach((row) => {
+                const matches = row.dataset.search.toLocaleLowerCase('id').includes(query);
+                row.hidden = !matches;
+
+                if (matches) {
+                    visibleCount += 1;
+                    row.cells[0].textContent = visibleCount;
+                }
+            });
+
+            vehicleSearchEmpty.hidden = query === '' || visibleCount > 0 || vehicleRows.length === 0;
+        });
+    </script>
 </body>
 </html>
