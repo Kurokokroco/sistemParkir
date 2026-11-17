@@ -8,11 +8,25 @@ use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::latest()->get();
+        $search = $request->validate([
+            'search' => ['nullable', 'string', 'max:255'],
+        ])['search'] ?? '';
 
-        return view('admin.pengguna.index', compact('users'));
+        $query = User::query();
+
+        if ($search !== '') {
+            $query->where(function ($query) use ($search) {
+                $query->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('role', 'like', "%{$search}%");
+            });
+        }
+
+        $users = $query->latest()->get();
+
+        return view('admin.pengguna.index', compact('users', 'search'));
     }
 
     public function create()

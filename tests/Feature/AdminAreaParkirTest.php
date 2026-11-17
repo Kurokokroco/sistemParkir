@@ -38,6 +38,26 @@ class AdminAreaParkirTest extends TestCase
             ->assertSee(route('admin.area_parkir.create'), false);
     }
 
+    public function test_admin_can_search_area_parkir_by_name_or_vehicle_type(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        AreaParkir::factory()->create([
+            'nama_area' => 'Zona Motor',
+            'jenis_kendaraan' => 'motor',
+        ]);
+        AreaParkir::factory()->create([
+            'nama_area' => 'Zona Mobil',
+            'jenis_kendaraan' => 'mobil',
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('admin.area_parkir.index', ['search' => 'motor']))
+            ->assertOk()
+            ->assertSee('Zona Motor')
+            ->assertDontSee('Zona Mobil')
+            ->assertSee('value="motor"', false);
+    }
+
     public function test_admin_can_create_an_area(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);

@@ -23,6 +23,28 @@ class AdminPenggunaTest extends TestCase
             ->assertSee(route('admin.transaksi.index'), false);
     }
 
+    public function test_admin_can_search_users_by_email(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        User::factory()->create([
+            'name' => 'Ani Pratama',
+            'email' => 'ani@example.test',
+            'role' => 'petugas',
+        ]);
+        User::factory()->create([
+            'name' => 'Budi Santoso',
+            'email' => 'budi@example.test',
+            'role' => 'owner',
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('admin.pengguna.index', ['search' => 'ani@example.test']))
+            ->assertOk()
+            ->assertSee('Ani Pratama')
+            ->assertDontSee('Budi Santoso')
+            ->assertSee('value="ani@example.test"', false);
+    }
+
     public function test_admin_can_open_the_user_creation_form(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);

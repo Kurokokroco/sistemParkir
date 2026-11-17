@@ -76,10 +76,16 @@
 
 
             <div class="card-body">
-                <div class="mb-3">
+                <form method="GET" action="{{ route('admin.pengguna.index') }}" class="mb-3">
                     <label for="user-search" class="form-label">Cari pengguna</label>
-                    <input type="search" id="user-search" class="form-control" placeholder="Ketik nama, email, atau role...">
-                </div>
+                    <div class="input-group">
+                        <input type="search" name="search" id="user-search" class="form-control" value="{{ $search }}" placeholder="Nama, email, atau role...">
+                        <button type="submit" class="btn btn-primary">Cari</button>
+                        @if ($search !== '')
+                            <a href="{{ route('admin.pengguna.index') }}" class="btn btn-outline-secondary">Reset</a>
+                        @endif
+                    </div>
+                </form>
                 <div class="table-responsive">
                     <table class="table table-striped table-bordered align-middle">
                         <thead class="table-primary">
@@ -93,7 +99,7 @@
                         </thead>
                         <tbody>
                             @forelse ($users as $item)
-                                <tr data-search="{{ $item->name }} {{ $item->email }} {{ $item->role }}">
+                                <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $item->name }}</td>
                                     <td>{{ $item->email }}</td>
@@ -114,13 +120,10 @@
                             @empty
                             <tr>
                                 <td class="text-center" colspan="5">
-                                    Belum ada data
+                                    {{ $search !== '' ? 'Pengguna tidak ditemukan.' : 'Belum ada data' }}
                                 </td>
                             </tr>
                             @endforelse
-                            <tr id="user-search-empty" hidden>
-                                <td class="text-center" colspan="5">Pengguna tidak ditemukan.</td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -131,27 +134,5 @@
     
 
      <script src="{{ asset('resources/js/bootstrap.min.js') }}"></script>
-    <script>
-        const userSearch = document.getElementById('user-search');
-        const userRows = Array.from(document.querySelectorAll('tbody tr[data-search]'));
-        const userSearchEmpty = document.getElementById('user-search-empty');
-
-        userSearch.addEventListener('input', () => {
-            const query = userSearch.value.trim().toLocaleLowerCase('id');
-            let visibleCount = 0;
-
-            userRows.forEach((row) => {
-                const matches = row.dataset.search.toLocaleLowerCase('id').includes(query);
-                row.hidden = !matches;
-
-                if (matches) {
-                    visibleCount += 1;
-                    row.cells[0].textContent = visibleCount;
-                }
-            });
-
-            userSearchEmpty.hidden = query === '' || visibleCount > 0 || userRows.length === 0;
-        });
-    </script>
 </body>
 </html>

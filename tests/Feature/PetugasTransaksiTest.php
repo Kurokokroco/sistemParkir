@@ -184,6 +184,48 @@ class PetugasTransaksiTest extends TestCase
             ->assertSee('Monitoring Transaksi');
     }
 
+    public function test_admin_can_search_transactions_by_vehicle_plate(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $areaParkir = $this->createAreaParkir();
+        $kendaraanCocok = $this->createKendaraan();
+        $kendaraanLain = Kendaraan::create([
+            'plat_nomor' => 'ZZ9876YY',
+            'jenis_kendaraan' => 'motor',
+            'merk' => 'Yamaha',
+        ]);
+        $this->createTransaksi($kendaraanCocok, $areaParkir);
+        $this->createTransaksi($kendaraanLain, $areaParkir);
+
+        $this->actingAs($admin)
+            ->get(route('admin.transaksi.index', ['search' => 'AB1234CD']))
+            ->assertOk()
+            ->assertSee('AB1234CD')
+            ->assertDontSee('ZZ9876YY')
+            ->assertSee('value="AB1234CD"', false);
+    }
+
+    public function test_petugas_can_search_transaction_history_by_vehicle_plate(): void
+    {
+        $petugas = User::factory()->create(['role' => 'petugas']);
+        $areaParkir = $this->createAreaParkir();
+        $kendaraanCocok = $this->createKendaraan();
+        $kendaraanLain = Kendaraan::create([
+            'plat_nomor' => 'ZZ9876YY',
+            'jenis_kendaraan' => 'motor',
+            'merk' => 'Yamaha',
+        ]);
+        $this->createTransaksi($kendaraanCocok, $areaParkir);
+        $this->createTransaksi($kendaraanLain, $areaParkir);
+
+        $this->actingAs($petugas)
+            ->get(route('petugas.transaksi.index', ['search' => 'AB1234CD']))
+            ->assertOk()
+            ->assertSee('AB1234CD')
+            ->assertDontSee('ZZ9876YY')
+            ->assertSee('value="AB1234CD"', false);
+    }
+
     public function test_admin_cannot_access_the_petugas_transaction_page(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);

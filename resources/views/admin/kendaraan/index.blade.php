@@ -78,10 +78,16 @@
 
             
             <div class="card-body">
-                <div class="mb-3">
+                <form method="GET" action="{{ route('admin.kendaraan.index') }}" class="mb-3">
                     <label for="vehicle-search" class="form-label">Cari kendaraan</label>
-                    <input type="search" id="vehicle-search" class="form-control" placeholder="Ketik plat nomor, jenis, atau merk...">
-                </div>
+                    <div class="input-group">
+                        <input type="search" name="search" id="vehicle-search" class="form-control" value="{{ $search }}" placeholder="Plat nomor, jenis, atau merk...">
+                        <button type="submit" class="btn btn-primary">Cari</button>
+                        @if ($search !== '')
+                            <a href="{{ route('admin.kendaraan.index') }}" class="btn btn-outline-secondary">Reset</a>
+                        @endif
+                    </div>
+                </form>
                 <div class="table-responsive">
                     <table class="table table-striped table-bordered align-middle">
                         <thead class="table-primary">
@@ -89,13 +95,13 @@
                                 <td>No.</td>
                                 <td>Plat Nomor</td>
                                 <td>Jenis Kendaraan</td>
-                                <td>Merk</td>
+                                <td>Merk (OPSIONAL)</td>
                                 <td>Aksi</td>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse ($kendaraan as $item)
-                                <tr data-search="{{ $item->plat_nomor }} {{ $item->jenis_kendaraan }} {{ $item->merk }}">
+                                <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $item->plat_nomor }}</td>
                                     <td>{{ ucfirst($item->jenis_kendaraan) }}</td>
@@ -112,13 +118,10 @@
                             @empty
                             <tr>
                                 <td class="text-center" colspan="5">
-                                    Belum ada data
+                                    {{ $search !== '' ? 'Kendaraan tidak ditemukan.' : 'Belum ada data.' }}
                                 </td>
                             </tr>
                             @endforelse
-                            <tr id="vehicle-search-empty" hidden>
-                                <td class="text-center" colspan="5">Kendaraan tidak ditemukan.</td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -129,27 +132,5 @@
     
 
      <script src="{{ asset('resources/js/bootstrap.min.js') }}"></script>
-    <script>
-        const vehicleSearch = document.getElementById('vehicle-search');
-        const vehicleRows = Array.from(document.querySelectorAll('tbody tr[data-search]'));
-        const vehicleSearchEmpty = document.getElementById('vehicle-search-empty');
-
-        vehicleSearch.addEventListener('input', () => {
-            const query = vehicleSearch.value.trim().toLocaleLowerCase('id');
-            let visibleCount = 0;
-
-            vehicleRows.forEach((row) => {
-                const matches = row.dataset.search.toLocaleLowerCase('id').includes(query);
-                row.hidden = !matches;
-
-                if (matches) {
-                    visibleCount += 1;
-                    row.cells[0].textContent = visibleCount;
-                }
-            });
-
-            vehicleSearchEmpty.hidden = query === '' || visibleCount > 0 || vehicleRows.length === 0;
-        });
-    </script>
 </body>
 </html>

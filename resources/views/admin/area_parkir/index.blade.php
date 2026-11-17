@@ -66,8 +66,19 @@
         <a href="{{ route('admin.area_parkir.create') }}" class="btn btn-primary btn-sm mb-3">Tambah Area</a>
 
         <div class="card border-0 shadow-sm">
-            <div class="card-body table-responsive">
-                <table class="table table-striped table-bordered align-middle mb-0">
+            <div class="card-body">
+                <form method="GET" action="{{ route('admin.area_parkir.index') }}" class="mb-3">
+                    <label for="area-search" class="form-label">Cari area parkir</label>
+                    <div class="input-group">
+                        <input type="search" name="search" id="area-search" class="form-control" value="{{ $search }}" placeholder="Nama area atau jenis kendaraan...">
+                        <button type="submit" class="btn btn-primary">Cari</button>
+                        @if ($search !== '')
+                            <a href="{{ route('admin.area_parkir.index') }}" class="btn btn-outline-secondary">Reset</a>
+                        @endif
+                    </div>
+                </form>
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered align-middle mb-0">
                     <thead class="table-primary">
                         <tr>
                             <th>No.</th>
@@ -95,11 +106,14 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="text-center">Belum ada area parkir.</td>
+                                <td colspan="5" class="text-center">
+                                    {{ $search !== '' ? 'Area parkir tidak ditemukan.' : 'Belum ada area parkir.' }}
+                                </td>
                             </tr>
                         @endforelse
                     </tbody>
-                </table>
+                    </table>
+                </div>
             </div>
         </div>
     </main>

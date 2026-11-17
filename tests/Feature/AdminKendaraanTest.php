@@ -28,6 +28,28 @@ class AdminKendaraanTest extends TestCase
             ->assertSee(route('admin.transaksi.index'), false);
     }
 
+    public function test_admin_can_search_vehicles_by_brand(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        Kendaraan::create([
+            'plat_nomor' => 'AB1234CD',
+            'jenis_kendaraan' => 'motor',
+            'merk' => 'Honda',
+        ]);
+        Kendaraan::create([
+            'plat_nomor' => 'CD5678EF',
+            'jenis_kendaraan' => 'mobil',
+            'merk' => 'Toyota',
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('admin.kendaraan.index', ['search' => 'Honda']))
+            ->assertOk()
+            ->assertSee('AB1234CD')
+            ->assertDontSee('CD5678EF')
+            ->assertSee('value="Honda"', false);
+    }
+
     public function test_admin_can_create_a_vehicle(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);

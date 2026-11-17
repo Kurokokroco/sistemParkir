@@ -16,13 +16,27 @@ class TransaksiParkirController extends Controller
 {
     public function index(Request $request): View
     {
-        $transaksiParkir = TransaksiParkir::query()
-            ->with(['kendaraan', 'areaParkir'])
-            ->latest('waktu_masuk')
-            ->get();
+        $search = $request->validate([
+            'search' => ['nullable', 'string', 'max:255'],
+        ])['search'] ?? '';
+
+        $query = TransaksiParkir::query()->with(['kendaraan', 'areaParkir']);
+
+        if ($search !== '') {
+            $query->where(function (Builder $query) use ($search): void {
+                $query->whereHas('kendaraan', function (Builder $query) use ($search): void {
+                    $query->where('plat_nomor', 'like', "%{$search}%")
+                        ->orWhere('jenis_kendaraan', 'like', "%{$search}%");
+                })->orWhereHas('areaParkir', function (Builder $query) use ($search): void {
+                    $query->where('nama_area', 'like', "%{$search}%");
+                });
+            });
+        }
+
+        $transaksiParkir = $query->latest('waktu_masuk')->get();
 
         if ($request->user()->role === 'admin') {
-            return view('admin.transaksi.index', compact('transaksiParkir'));
+            return view('admin.transaksi.index', compact('transaksiParkir', 'search'));
         }
 
         $kendaraanTersedia = Kendaraan::query()
@@ -40,7 +54,7 @@ class TransaksiParkirController extends Controller
             ->filter(fn (AreaParkir $areaParkir): bool => $areaParkir->kendaraan_aktif_count < $areaParkir->kapasitas)
             ->values();
 
-        return view('petugas.transaksi.index', compact('transaksiParkir', 'kendaraanTersedia', 'areaParkirTersedia'));
+        return view('petugas.transaksi.index', compact('transaksiParkir', 'kendaraanTersedia', 'areaParkirTersedia', 'search'));
     }
 
     public function store(Request $request): RedirectResponse

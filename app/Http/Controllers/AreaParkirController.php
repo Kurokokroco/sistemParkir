@@ -11,16 +11,27 @@ use Illuminate\View\View;
 
 class AreaParkirController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $areaParkir = AreaParkir::query()
+        $search = $request->validate([
+            'search' => ['nullable', 'string', 'max:255'],
+        ])['search'] ?? '';
+
+        $query = AreaParkir::query()
             ->withCount([
                 'transaksiParkir as kendaraan_aktif_count' => fn (Builder $query) => $query->whereNull('waktu_keluar'),
-            ])
-            ->orderBy('nama_area')
-            ->get();
+            ]);
 
-        return view('admin.area_parkir.index', compact('areaParkir'));
+        if ($search !== '') {
+            $query->where(function ($query) use ($search): void {
+                $query->where('nama_area', 'like', "%{$search}%")
+                    ->orWhere('jenis_kendaraan', 'like', "%{$search}%");
+            });
+        }
+
+        $areaParkir = $query->orderBy('nama_area')->get();
+
+        return view('admin.area_parkir.index', compact('areaParkir', 'search'));
     }
 
     public function create(): View

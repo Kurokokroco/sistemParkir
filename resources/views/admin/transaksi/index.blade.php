@@ -58,6 +58,16 @@
 
         <section class="card border-0 shadow-sm">
             <div class="card-body">
+                <form method="GET" action="{{ route('admin.transaksi.index') }}" class="mb-3">
+                    <label for="transaction-search" class="form-label">Cari transaksi</label>
+                    <div class="input-group">
+                        <input type="search" name="search" id="transaction-search" class="form-control" value="{{ $search }}" placeholder="Plat nomor, jenis kendaraan, atau area...">
+                        <button type="submit" class="btn btn-primary">Cari</button>
+                        @if ($search !== '')
+                            <a href="{{ route('admin.transaksi.index') }}" class="btn btn-outline-secondary">Reset</a>
+                        @endif
+                    </div>
+                </form>
                 <div class="table-responsive">
                     <table class="table table-striped table-bordered align-middle">
                         <thead class="table-primary">
@@ -92,7 +102,9 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="8" class="text-center">Belum ada transaksi parkir.</td>
+                                    <td colspan="8" class="text-center">
+                                        {{ $search !== '' ? 'Transaksi tidak ditemukan.' : 'Belum ada transaksi parkir.' }}
+                                    </td>
                                 </tr>
                             @endforelse
                         </tbody>

@@ -10,11 +10,25 @@ use Illuminate\View\View;
 
 class KendaraanController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $kendaraan = Kendaraan::query()->latest()->get();
+        $search = $request->validate([
+            'search' => ['nullable', 'string', 'max:255'],
+        ])['search'] ?? '';
 
-        return view('admin.kendaraan.index', compact('kendaraan'));
+        $query = Kendaraan::query();
+
+        if ($search !== '') {
+            $query->where(function ($query) use ($search): void {
+                $query->where('plat_nomor', 'like', "%{$search}%")
+                    ->orWhere('jenis_kendaraan', 'like', "%{$search}%")
+                    ->orWhere('merk', 'like', "%{$search}%");
+            });
+        }
+
+        $kendaraan = $query->latest()->get();
+
+        return view('admin.kendaraan.index', compact('kendaraan', 'search'));
     }
 
     public function create(): View
