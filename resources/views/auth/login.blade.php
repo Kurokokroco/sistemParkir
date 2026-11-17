@@ -17,7 +17,7 @@
                     <div class="card-body p-4">
 
                         <h4 class="text-center mb-1">Sistem Parkir</h4>
-                        <p class="text-center text-muted mb-4">Silakan login untuk melanjutkan</p>
+                        <p class="text-center text-muted mb-4">Silakan login </p>
 
                         <form method="POST" action="{{ route('login.process') }}" novalidate>
                             @csrf
