@@ -33,6 +33,31 @@ class PetugasTransaksiTest extends TestCase
         ]);
     }
 
+    public function test_petugas_can_choose_vehicle_and_area_from_the_same_form(): void
+    {
+        $petugas = User::factory()->create(['role' => 'petugas']);
+        $this->createKendaraan();
+        $areaMotor = AreaParkir::factory()->create([
+            'nama_area' => 'Area Motor Khusus',
+            'jenis_kendaraan' => 'motor',
+            'kapasitas' => 10,
+        ]);
+        $areaMobil = AreaParkir::factory()->create([
+            'nama_area' => 'Area Mobil Khusus',
+            'jenis_kendaraan' => 'mobil',
+            'kapasitas' => 10,
+        ]);
+
+        $this->actingAs($petugas)
+            ->get(route('petugas.transaksi.index'))
+            ->assertOk()
+            ->assertSee('name="kendaraan_id"', false)
+            ->assertSee('name="area_parkir_id"', false)
+            ->assertSee($areaMotor->nama_area)
+            ->assertSee($areaMobil->nama_area)
+            ->assertDontSee('Tampilkan Area');
+    }
+
     public function test_petugas_cannot_start_another_active_transaction_for_the_same_vehicle(): void
     {
         $petugas = User::factory()->create(['role' => 'petugas']);

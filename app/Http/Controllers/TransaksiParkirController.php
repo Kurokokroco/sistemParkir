@@ -39,6 +39,10 @@ class TransaksiParkirController extends Controller
             return view('admin.transaksi.index', compact('transaksiParkir', 'search'));
         }
 
+        if ($request->user()->role === 'owner') {
+            return view('owner.dashboard', compact('transaksiParkir', 'search'));
+        }
+
         $kendaraanTersedia = Kendaraan::query()
             ->whereDoesntHave('transaksiParkir', function ($query): void {
                 $query->whereNull('waktu_keluar');

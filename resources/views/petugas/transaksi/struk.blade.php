@@ -46,7 +46,7 @@
             </div>
         </div>
         <div class="text-center mt-3 no-print">
-            <button type="button" class="btn btn-primary" onclick="window.print()">Cetak</button>
+            <p>Untuk mencetak struk, gunakan Ctrl+P .</p>
             <a href="{{ route('petugas.transaksi.index') }}" class="btn btn-secondary">Kembali</a>
         </div>
     </main>

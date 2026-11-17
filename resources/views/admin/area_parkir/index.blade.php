@@ -97,11 +97,26 @@
                                 <td>{{ $area->kendaraan_aktif_count }} / {{ $area->kapasitas }}</td>
                                 <td class="text-nowrap">
                                     <a href="{{ route('admin.area_parkir.edit', $area) }}" class="btn btn-warning btn-sm">Edit</a>
-                                    <form action="{{ route('admin.area_parkir.destroy', $area) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus area ini?')">Hapus</button>
-                                    </form>
+                                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#konfirmasiHapusArea-{{ $area->id }}">Hapus</button>
+                                    <div class="modal fade" id="konfirmasiHapusArea-{{ $area->id }}" tabindex="-1" aria-labelledby="judulHapusArea-{{ $area->id }}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h2 class="modal-title fs-5" id="judulHapusArea-{{ $area->id }}">Konfirmasi Hapus Area</h2>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                                                </div>
+                                                <div class="modal-body">Yakin ingin menghapus area {{ $area->nama_area }}?</div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                    <form action="{{ route('admin.area_parkir.destroy', $area) }}" method="POST">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-danger">Ya, Hapus</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                         @empty

@@ -108,11 +108,26 @@
                                     <td>{{ $item->merk ?? '-' }}</td>
                                     <td>
                                         <a href="{{ route('admin.kendaraan.edit', $item) }}" class="btn btn-warning btn-sm">Edit</a>
-                                        <form action="{{ route('admin.kendaraan.destroy', $item) }}" method="POST" class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus kendaraan ini?')">Hapus</button>
-                                        </form>
+                                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#konfirmasiHapusKendaraan-{{ $item->id }}">Hapus</button>
+                                        <div class="modal fade" id="konfirmasiHapusKendaraan-{{ $item->id }}" tabindex="-1" aria-labelledby="judulHapusKendaraan-{{ $item->id }}" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h2 class="modal-title fs-5" id="judulHapusKendaraan-{{ $item->id }}">Konfirmasi Hapus Kendaraan</h2>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                                                    </div>
+                                                    <div class="modal-body">Yakin ingin menghapus kendaraan {{ $item->plat_nomor }}?</div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                        <form action="{{ route('admin.kendaraan.destroy', $item) }}" method="POST">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="btn btn-danger">Ya, Hapus</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
                             @empty

@@ -58,5 +58,5 @@ Route::middleware(['auth', 'role:petugas'])->prefix('petugas')->name('petugas.')
 });
 
 Route::middleware(['auth', 'role:owner'])->prefix('owner')->name('owner.')->group(function () {
-    Route::get('/dashboard', fn () => view('owner.dashboard'))->name('dashboard');
+    Route::get('/dashboard', [TransaksiParkirController::class, 'index'])->name('dashboard');
 });

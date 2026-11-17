@@ -10,7 +10,7 @@
     <nav class="navbar navbar-expand-sm navbar-dark bg-primary">
         <div class="container">
             <a class="navbar-brand" href="{{ route('petugas.dashboard') }}">Sistem Parkir</a>
-            <a class="nav-link active text-white" href="{{ route('petugas.transaksi.index') }}">Transaksi Parkir</a>
+
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit" class="btn btn-outline-light">Logout</button>
@@ -55,12 +55,12 @@
                 @else
                     <form method="POST" action="{{ route('petugas.transaksi.store') }}" class="row g-3 align-items-end">
                         @csrf
-                        <div class="col-md-8">
+                        <div class="col-md-5">
                             <label for="kendaraan_id" class="form-label">Kendaraan</label>
                             <select name="kendaraan_id" id="kendaraan_id" class="form-select @error('kendaraan_id') is-invalid @enderror" required>
                                 <option value="">Pilih kendaraan</option>
                                 @foreach ($kendaraanTersedia as $kendaraan)
-                                    <option value="{{ $kendaraan->id }}" data-jenis="{{ $kendaraan->jenis_kendaraan }}" @selected(old('kendaraan_id') == $kendaraan->id)>
+                                    <option value="{{ $kendaraan->id }}" @selected(old('kendaraan_id') == $kendaraan->id)>
                                         {{ $kendaraan->plat_nomor }} - {{ ucfirst($kendaraan->jenis_kendaraan) }}{{ $kendaraan->merk ? ' - '.$kendaraan->merk : '' }}
                                     </option>
                                 @endforeach
@@ -69,13 +69,14 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-5">
                             <label for="area_parkir_id" class="form-label">Area Parkir</label>
+                            <small class="form-text text-muted">Pilih area dengan jenis yang sama seperti kendaraan.</small>
                             <select name="area_parkir_id" id="area_parkir_id" class="form-select @error('area_parkir_id') is-invalid @enderror" required>
                                 <option value="">Pilih area</option>
                                 @foreach ($areaParkirTersedia as $area)
-                                    <option value="{{ $area->id }}" data-jenis="{{ $area->jenis_kendaraan }}" @selected(old('area_parkir_id') == $area->id)>
-                                        {{ $area->nama_area }} ({{ $area->kendaraan_aktif_count }}/{{ $area->kapasitas }})
+                                    <option value="{{ $area->id }}" @selected(old('area_parkir_id') == $area->id)>
+                                        {{ $area->nama_area }} - {{ ucfirst($area->jenis_kendaraan) }} ({{ $area->kendaraan_aktif_count }}/{{ $area->kapasitas }})
                                     </option>
                                 @endforeach
                             </select>
@@ -138,11 +139,26 @@
                                     </td>
                                     <td class="text-nowrap">
                                         @if ($transaksi->waktu_keluar === null)
-                                            <form method="POST" action="{{ route('petugas.transaksi.checkout', $transaksi) }}" class="d-inline">
-                                                @csrf
-                                                @method('PATCH')
-                                                <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Catat kendaraan ini keluar?')">Catat Keluar</button>
-                                            </form>
+                                            <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#konfirmasiKeluar-{{ $transaksi->id }}">Catat Keluar</button>
+                                            <div class="modal fade" id="konfirmasiKeluar-{{ $transaksi->id }}" tabindex="-1" aria-labelledby="judulKonfirmasiKeluar-{{ $transaksi->id }}" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h2 class="modal-title fs-5" id="judulKonfirmasiKeluar-{{ $transaksi->id }}">Konfirmasi Kendaraan Keluar</h2>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                                                        </div>
+                                                        <div class="modal-body">Catat kendaraan {{ $transaksi->kendaraan->plat_nomor }} keluar dari area parkir?</div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                            <form method="POST" action="{{ route('petugas.transaksi.checkout', $transaksi) }}">
+                                                                @csrf
+                                                                @method('PATCH')
+                                                                <button type="submit" class="btn btn-success">Ya, Catat Keluar</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         @endif
                                         <a href="{{ route('petugas.transaksi.receipt', $transaksi) }}" class="btn btn-outline-primary btn-sm">Struk</a>
                                     </td>
@@ -160,28 +176,6 @@
             </div>
         </section>
     </main>
-    <script>
-        const kendaraanSelect = document.getElementById('kendaraan_id');
-        const areaSelect = document.getElementById('area_parkir_id');
-
-        if (kendaraanSelect && areaSelect) {
-            const filterArea = () => {
-                const jenisKendaraan = kendaraanSelect.selectedOptions[0]?.dataset.jenis;
-
-                Array.from(areaSelect.options).forEach((option) => {
-                    if (option.value) {
-                        option.hidden = Boolean(jenisKendaraan) && option.dataset.jenis !== jenisKendaraan;
-                    }
-                });
-
-                if (areaSelect.selectedOptions[0]?.hidden) {
-                    areaSelect.value = '';
-                }
-            };
-
-            kendaraanSelect.addEventListener('change', filterArea);
-            filterArea();
-        }
-    </script>
+    <script src="{{ asset('resources/js/bootstrap.min.js') }}"></script>
 </body>
 </html>
